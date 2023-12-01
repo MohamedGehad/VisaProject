@@ -1,8 +1,10 @@
 ﻿namespace VisaProject.Models
 {
-    public class Day
+    public class validation
     {
         public int id { get; set; }
-        public int countOfDay { get; set; }
+        public string Message { get; set; }
+
+
     }
 }

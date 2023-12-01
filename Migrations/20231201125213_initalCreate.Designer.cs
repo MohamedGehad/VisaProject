@@ -12,8 +12,8 @@ using VisaProject.Data;
 namespace VisaProject.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20231129162401_AllMirgraion")]
-    partial class AllMirgraion
+    [Migration("20231201125213_initalCreate")]
+    partial class initalCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -50,7 +50,8 @@ namespace VisaProject.Migrations
 
                     b.HasKey("id");
 
-                    b.HasIndex("ImageId");
+                    b.HasIndex("ImageId")
+                        .IsUnique();
 
                     b.ToTable("Armina");
                 });
@@ -72,7 +73,8 @@ namespace VisaProject.Migrations
 
                     b.HasKey("id");
 
-                    b.HasIndex("ImageId");
+                    b.HasIndex("ImageId")
+                        .IsUnique();
 
                     b.ToTable("Bahrain");
                 });
@@ -115,7 +117,8 @@ namespace VisaProject.Migrations
 
                     b.HasIndex("CountryId");
 
-                    b.HasIndex("DayId");
+                    b.HasIndex("DayId", "CountryId")
+                        .IsUnique();
 
                     b.ToTable("countryDayCosts");
                 });
@@ -128,9 +131,8 @@ namespace VisaProject.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
 
-                    b.Property<string>("countOfDay")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("countOfDay")
+                        .HasColumnType("int");
 
                     b.HasKey("id");
 
@@ -139,11 +141,11 @@ namespace VisaProject.Migrations
 
             modelBuilder.Entity("VisaProject.Models.Image", b =>
                 {
-                    b.Property<int>("id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("NationalID")
                         .IsRequired()
@@ -157,12 +159,13 @@ namespace VisaProject.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("userId")
+                    b.Property<int>("UserId")
                         .HasColumnType("int");
 
-                    b.HasKey("id");
+                    b.HasKey("Id");
 
-                    b.HasIndex("userId");
+                    b.HasIndex("UserId")
+                        .IsUnique();
 
                     b.ToTable("Images");
                 });
@@ -184,7 +187,8 @@ namespace VisaProject.Migrations
 
                     b.HasKey("id");
 
-                    b.HasIndex("ImageId");
+                    b.HasIndex("ImageId")
+                        .IsUnique();
 
                     b.ToTable("Turky");
                 });
@@ -197,6 +201,12 @@ namespace VisaProject.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<Guid>("Code")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("CountryDayCostId")
+                        .HasColumnType("int");
+
                     b.Property<int>("CountryFromId")
                         .HasColumnType("int");
 
@@ -207,47 +217,76 @@ namespace VisaProject.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime>("ExpirePassportNumber")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("countryDayCostId")
+                    b.Property<string>("PassportNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Profession")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PurposeOfTravel")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Status")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("expirePassportNumber")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("passportNumber")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("phone")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("profession")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("purposeOfTravel")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("status")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime>("travelDate")
+                    b.Property<DateTime>("TravelDate")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CountryDayCostId");
 
                     b.HasIndex("CountryFromId");
 
                     b.HasIndex("CountryliveInId");
 
-                    b.HasIndex("countryDayCostId");
-
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("VisaProject.Models.UserValidation", b =>
+                {
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ValidationId")
+                        .HasColumnType("int");
+
+                    b.HasKey("UserId", "ValidationId");
+
+                    b.HasIndex("ValidationId");
+
+                    b.ToTable("UserValidation");
+                });
+
+            modelBuilder.Entity("VisaProject.Models.validation", b =>
+                {
+                    b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("id");
+
+                    b.ToTable("validation");
                 });
 
             modelBuilder.Entity("VisaProject.Models.Armina", b =>
@@ -293,13 +332,13 @@ namespace VisaProject.Migrations
 
             modelBuilder.Entity("VisaProject.Models.Image", b =>
                 {
-                    b.HasOne("VisaProject.Models.User", "user")
+                    b.HasOne("VisaProject.Models.User", "User")
                         .WithMany()
-                        .HasForeignKey("userId")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("user");
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("VisaProject.Models.Turky", b =>
@@ -315,6 +354,12 @@ namespace VisaProject.Migrations
 
             modelBuilder.Entity("VisaProject.Models.User", b =>
                 {
+                    b.HasOne("VisaProject.Models.CountryDayCost", "CountryDayCost")
+                        .WithMany()
+                        .HasForeignKey("CountryDayCostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("VisaProject.Models.Country", "CountryFrom")
                         .WithMany()
                         .HasForeignKey("CountryFromId")
@@ -327,17 +372,30 @@ namespace VisaProject.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("VisaProject.Models.CountryDayCost", "countryDayCost")
-                        .WithMany()
-                        .HasForeignKey("countryDayCostId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Navigation("CountryDayCost");
 
                     b.Navigation("CountryFrom");
 
                     b.Navigation("CountryLiveIn");
+                });
 
-                    b.Navigation("countryDayCost");
+            modelBuilder.Entity("VisaProject.Models.UserValidation", b =>
+                {
+                    b.HasOne("VisaProject.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("VisaProject.Models.validation", "Validation")
+                        .WithMany()
+                        .HasForeignKey("ValidationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+
+                    b.Navigation("Validation");
                 });
 #pragma warning restore 612, 618
         }

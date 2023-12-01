@@ -8,7 +8,6 @@
         public string birthCertificate { get; set; }
 
         public int ImageId { get; set; }
-
         public Image Image { get; set; }
     }
 

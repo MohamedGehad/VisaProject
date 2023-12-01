@@ -6,22 +6,48 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace VisaProject.Migrations
 {
     /// <inheritdoc />
-    public partial class AllMirgraion : Migration
+    public partial class initalCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "countries",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    name = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_countries", x => x.id);
+                });
+
             migrationBuilder.CreateTable(
                 name: "Days",
                 columns: table => new
                 {
                     id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    countOfDay = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    countOfDay = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Days", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "validation",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Message = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_validation", x => x.id);
                 });
 
             migrationBuilder.CreateTable(
@@ -57,18 +83,19 @@ namespace VisaProject.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    Code = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    phone = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    passportNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    expirePassportNumber = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    profession = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    purposeOfTravel = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    status = table.Column<bool>(type: "bit", nullable: false),
-                    travelDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Phone = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PassportNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ExpirePassportNumber = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Profession = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PurposeOfTravel = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Status = table.Column<int>(type: "int", nullable: false),
+                    TravelDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CountryFromId = table.Column<int>(type: "int", nullable: false),
                     CountryliveInId = table.Column<int>(type: "int", nullable: false),
-                    countryDayCostId = table.Column<int>(type: "int", nullable: false)
+                    CountryDayCostId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -86,8 +113,8 @@ namespace VisaProject.Migrations
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Users_countryDayCosts_countryDayCostId",
-                        column: x => x.countryDayCostId,
+                        name: "FK_Users_countryDayCosts_CountryDayCostId",
+                        column: x => x.CountryDayCostId,
                         principalTable: "countryDayCosts",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
@@ -97,21 +124,45 @@ namespace VisaProject.Migrations
                 name: "Images",
                 columns: table => new
                 {
-                    id = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Passport = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Photograph = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     NationalID = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    userId = table.Column<int>(type: "int", nullable: false)
+                    UserId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Images", x => x.id);
+                    table.PrimaryKey("PK_Images", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Images_Users_userId",
-                        column: x => x.userId,
+                        name: "FK_Images_Users_UserId",
+                        column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserValidation",
+                columns: table => new
+                {
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    ValidationId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserValidation", x => new { x.UserId, x.ValidationId });
+                    table.ForeignKey(
+                        name: "FK_UserValidation_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_UserValidation_validation_ValidationId",
+                        column: x => x.ValidationId,
+                        principalTable: "validation",
+                        principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -133,7 +184,7 @@ namespace VisaProject.Migrations
                         name: "FK_Armina_Images_ImageId",
                         column: x => x.ImageId,
                         principalTable: "Images",
-                        principalColumn: "id",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -153,7 +204,7 @@ namespace VisaProject.Migrations
                         name: "FK_Bahrain_Images_ImageId",
                         column: x => x.ImageId,
                         principalTable: "Images",
-                        principalColumn: "id",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -173,19 +224,21 @@ namespace VisaProject.Migrations
                         name: "FK_Turky_Images_ImageId",
                         column: x => x.ImageId,
                         principalTable: "Images",
-                        principalColumn: "id",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Armina_ImageId",
                 table: "Armina",
-                column: "ImageId");
+                column: "ImageId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Bahrain_ImageId",
                 table: "Bahrain",
-                column: "ImageId");
+                column: "ImageId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_countryDayCosts_CountryId",
@@ -193,24 +246,27 @@ namespace VisaProject.Migrations
                 column: "CountryId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_countryDayCosts_DayId",
+                name: "IX_countryDayCosts_DayId_CountryId",
                 table: "countryDayCosts",
-                column: "DayId");
+                columns: new[] { "DayId", "CountryId" },
+                unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Images_userId",
+                name: "IX_Images_UserId",
                 table: "Images",
-                column: "userId");
+                column: "UserId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Turky_ImageId",
                 table: "Turky",
-                column: "ImageId");
+                column: "ImageId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Users_countryDayCostId",
+                name: "IX_Users_CountryDayCostId",
                 table: "Users",
-                column: "countryDayCostId");
+                column: "CountryDayCostId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Users_CountryFromId",
@@ -221,6 +277,11 @@ namespace VisaProject.Migrations
                 name: "IX_Users_CountryliveInId",
                 table: "Users",
                 column: "CountryliveInId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserValidation_ValidationId",
+                table: "UserValidation",
+                column: "ValidationId");
         }
 
         /// <inheritdoc />
@@ -236,7 +297,13 @@ namespace VisaProject.Migrations
                 name: "Turky");
 
             migrationBuilder.DropTable(
+                name: "UserValidation");
+
+            migrationBuilder.DropTable(
                 name: "Images");
+
+            migrationBuilder.DropTable(
+                name: "validation");
 
             migrationBuilder.DropTable(
                 name: "Users");
@@ -246,6 +313,9 @@ namespace VisaProject.Migrations
 
             migrationBuilder.DropTable(
                 name: "Days");
+
+            migrationBuilder.DropTable(
+                name: "countries");
         }
     }
 }
